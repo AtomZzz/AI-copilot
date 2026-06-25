@@ -1,0 +1,69 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: bank-ai-assistant
+  
+  # PostgreSQL Configuration
+  datasource:
+    url: jdbc:postgresql://192.168.179.128:5432/bank_ai_assistant
+    username: root
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+  
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  
+  # Redis Configuration
+  data:
+    redis:
+      host: 192.168.179.128
+      port: 6379
+      timeout: 5000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  
+  # Spring AI - Alibaba DashScope Configuration
+  ai:
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY}
+      chat:
+        options:
+          model: qwen-plus
+
+# Custom Assistant Configuration
+assistant:
+  ai:
+    system-prompt: classpath:prompts/system-prompt.txt
+    memory:
+      short-term-ttl: 3600  # Short-term memory TTL in seconds
+      max-history-turns: 10  # Maximum conversation history turns
+  tool:
+    timeout-ms: 3000  # Tool execution timeout in milliseconds
+    retry-count: 2    # Tool failure retry count
+  security:
+    enabled: true     # Enable security checks
+
+# Logging Configuration
+logging:
+  level:
+    com.bank.assistant: DEBUG
+    org.springframework.ai: DEBUG
+    dev.langchain4j: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
